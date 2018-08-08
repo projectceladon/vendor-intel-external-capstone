@@ -20,6 +20,7 @@
 #include "SStream.h"
 #include "cs_priv.h"
 #include "utils.h"
+#include <assert.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable: 4996) // disable MSVC's warning on strcpy()
@@ -47,9 +48,10 @@ void SStream_concat(SStream *ss, const char *fmt, ...)
 #ifndef CAPSTONE_DIET
 	va_list ap;
 	int ret;
-
+	assert((ss->index >= 0) && (ss->index < sizeof(ss->buffer)));
 	va_start(ap, fmt);
 	ret = cs_vsnprintf(ss->buffer + ss->index, sizeof(ss->buffer) - (ss->index + 1), fmt, ap);
+	assert((ret >= 0) && (ret < sizeof(ss->buffer)));	
 	va_end(ap);
 	ss->index += ret;
 #endif
